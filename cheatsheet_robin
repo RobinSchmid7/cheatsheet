@@ -1,0 +1,231 @@
+# Cheat sheet, Robin Schmid
+
+# Terminal
+- Keyboard shortcuts:
+	- Delete until beginning of line: CTRL + U
+	- Delete until end of line: CTRL + K
+	- Delete whole command: CTRL + C
+	- Recall deleted command: CTRL + Y
+	- Remove next character: DEL or ALT + D
+	- Go to start of line: CTRL + A
+	- Go to end of line: CTRL + Terminator E
+	- Split screen vertical: CTRL + E
+	- Split screen horizontal: CTRL + O
+	- Open new terminator from anywhere: CTRL + ALT + T
+- Search for file: file . -iname <file_name>
+- List tree structure of files: tree .
+	- Set specific number of search layers: -L <num_layers>
+- Set infinite scrolling size: open terminal, go to preferences/profiles/scrolling
+- Allow write right for file: sudo chmod +x <file_name>
+- Hardlink files: ln <file_to_link> <destination_name>
+- Show current path: pwd
+- Remove directory: rm -r <dir>, remove write protected without prompt: rm -rf <dir>
+
+
+# Bash
+- Create alias command: alias = "<alias_command>"
+- Run command in background: add & at end of command
+- Run multiple commands independent of output of previous command: add ; at end of command
+
+	
+# Apt
+- Build pkg without release file: sudo add-apt-repository --remove ppa:<repo_name>
+- Remove pkg without release file from update list: go to settings/ software & update, remove links
+- Public key not available error: sudo apt-key adv --keyserver keyserve.ubuntu.com --recv-keys <public_key>
+
+
+# Vim
+- Turn on line numbers: ESC + :set number
+- Copy line: ESC + y
+- Past line: ESC + p
+- Undo command: ESC + u
+
+
+# ROS
+- Running bagfiles: rosbag play <bag_name> </topic_name>
+	- loop bagfile: -l or --loop
+	- rate: -r 0.1
+	- start time: -s 10
+
+- Run image and display: rosrun image_view image_view image:=<image_topic>
+	- Run compressed image: rosrun image_view image_view image:=<image_topic> _image_transport:=compressed, note: do not add /compressed in image_topic name
+	
+- Save image from bag to jpeg file:
+	- Run bag file: http://wiki.ros.org/rosbag/Tutorials/Exporting%20image%20and%20video%20data#CA-3c01598492a487c3e796021ba68f9a16262906ba_1, set output frame as camera_out/image
+	- If compressed run additional service: rosrun image_transport republish compressed in:=/crl_rzr/multisense_front/aux/image_color out:=/crl_rzr/camera_out/image
+	- Output is stored in .ros directory, move images to home directory: mv ~/.ros/frame*.jpg ~
+
+- Echo rostopic: rostopic echo </topic_name>
+	- Do not print array: --noarr
+
+- Merge bagfiles: download bag_merge.py script from internet
+	- Run: python bag_merge.py -o <output_file_name> <bag1> <bag2>
+- Launch files: running nodelet and using topic add correct group description
+- Show rqt graph: rosrun rqt_tf_tree rqt_tf_tree
+- Analyse plot with plotjugger:  rosrun plotjuggler plotjuggler
+- Analyse running nodes: rosnode info <node_name>
+- Print value on screen: add line ROS_INFO("<value>: %d", <value>);
+	- %s: string, %d: decimal (float), %i: integer
+	- convert char to string: add .c_str() at end of output value
+- Error code -11: segmentation fault, check vector if pointing to invalid address
+- Rospy time:  now = rospy.Time.now(), zero_time = rospy.Time() or rospy.Time(0)
+- Subscriber latch parameter: if true, subscribing to latest msg even if subscriber was not created before msg
+- Transform point accross time: lookup_transform_full() method
+- Set sim time via command line: rosparam set /use_sim_time true
+- Republish raw image to compressed image: rosrun image_transport republish raw in:=<image_topic_in> compressed out:=<image_topic_out>
+- Record ros bag, set sime time to true: rosparam set /use_sime_time true
+- Clean log direcotory: rosclean purge
+
+# Git
+- Create new branch: git checkout -b <branch_name>
+- Commit without git hook: git commit -m "<msg>" --no-verify
+- Update all available branches: git fetch
+- Checkout to remote branch do not use "remotes/origin" part of branch description
+- Add global git ignore file: touch ~/.gitignore, add files to be ignored, set git config --global core.excludesfile ~/.gitignore
+- Add git repo into another repo without submodule: remove .git file in repo to add, will not be recognized as a git repo
+- Ignore warnings git commit: git commit -m "<msg>" -n
+- Rename branch:
+	- git branch -m <old_branch> <new_branch>
+	- Push local branch and unset upstream branch: git push origin -u <new_branch>
+	- Delete old branch: git push origin --delete <old_branch>
+- Delete local branch: git branch --delete <branch_name>, delete remote branch: git push <origin> --delete <branch_name>, <origin> comes from remotes/origin/feature/branch_name, usually <origin> = origin
+- Merge branch: git checkout <branch_to_merge_on>, git merge <branch_to_be_merged>
+- Undo commit but keep locally: git reset --soft HEAD~1
+- Undo commit and remove locally: git reset --hard HEAD~1
+
+
+# Catkin
+- Build single package again: remove build directory, rm -r <dir_name>
+	- Remove everything: catkin clean
+	
+
+# C++
+- Exception for any type: try {} catch (...) {}
+
+
+# Clion
+- Change multiple rows at the same time: ALT + SHIFT + Mouse Cursor
+- Color font: Monokai, text font: select bold
+- Change: change font size with Ctrl + Mouse Wheel
+- Open file with Clion: clion <file_name>
+
+
+# Python
+- Static method: use decorator @staticmethod on top of the method, method does not belong to class, i.e. does not inherit "self" of class, can be called without an object of the class, use if not need access to class variables in method
+- Convert list to tuple: tuple(<list>), list to tuple: list(<tuple>)
+- List comprehension: [x**2 for x in range(10)], apply function to each element of list
+- Combine lists to tuple: zip(<array_1>, <array_2>), results in [(<array_1>[0], <array_2>[0]), (<array_1>[1], <array_2>[1]), ...]
+- Access parameter from yaml file in a given namespace: <param> = rospy.get_param("~<param>")
+- Create an empty 2d array: [[], []]
+- Create an empty numpy array: np.empty((<size_row>, <size_col>), float)
+- List comprehension for 2d array, with if and else condition: [f(x) if <condition> else g(x) for line in <2d_array> for x in line]
+- Create virtual environment python 3: python3 -m <venv_name> <path_to_venv>
+- If setup.py script is available, run pip install . to install
+- If requirements.txt file is available, run pip -r install requirement.txt to install
+
+# Pycharm
+- Activate PEP8 inspection in settings as warnings, improves code layout
+- Set correct VCS root (lower bar) to check for changes and highlight them in document
+- Reverse list in python: <list>[::-1], general syntax: start, stop, step; so : = all, -1 = step backwards
+
+# Pytorch
+- Reshape -1 value refers to remaining shape during reshaping
+- pin_memory in dataloader improves performance in loading data when using GPU
+
+
+# Setup
+- Setup clion and pycharm to open catkin project: install standalone pkg from website
+	- Launch via: sh /opt/clion-*/bin/clion.sh
+- Setup workspace grid matrix: install gnome-tweaks, search for "workspace matrix" at gnome-extensions online and install from website
+- Add alias for command: create bash script, e.g. .bashrc, add line alias c = '<command>'
+- Use autocommit script: install gitwatch.sh
+	- Run with: cd && ./Utils/gitwatch/gitwatch.sh -r origin -b master ~/git/file_uploads/cheatsheet
+- Disk analyzer: sudo apt-get install baobab
+
+	
+# Useful tutorials
+- Run scripts upon start automatically: https://marsown.com/wordpress/how-to-enable-etc-rc-local-with-systemd-on-ubuntu-20-04/
+- Autocommit git: https://vpseo.com/2020/05/22/automatically-push-an-updated-file-whenever-it-is-changed/
+
+
+# Debugging notes and solutions
+- New ros version uses tf2 instead of tf, search for conversion of methods online, http://wiki.ros.org/tf2/Tutorials/Migration/TransformListener
+- GNU: debugging tool, analyse crashes and stop at specific point
+- Order of launchfiles matters in replay.yaml file, launch files which receive input from others later
+- Run gitwatch after opening a file with gedit: need to open file from path where gitwatch points too, not symlink
+- Use racerenv cleanup command from time to time to clear RAM
+- Fix copy and paste on tmux terminal: https://www.seanh.cc/2020/12/27/copy-and-paste-in-tmux/, change .tmux_conf file
+- For quick debugging launch launchfile via terminal not with tmux script
+- Image callback function requires correct encoding, for black and white use mono encoding, check data type
+- Ubuntu 20.04 makes symlinks for /lib to /usr/lib directories etc., can result in problems finding libraries: add HINTS /usr in CMakeLists, e.g. find_package(Boost REQUIRED HINTS /usr)
+- If no launchfile is available in ROS to run file try with rosrun, roslaunch automatically creates a roscore and can launch multiple nodes whereas rosrun does not and can only launch one node at the time
+- Publish simple test image tutorial: http://wiki.ros.org/image_transport/Tutorials/PublishingImages
+- Print cv Mat as vector with ROS_INFO:
+	std::vector<float> cv_mat_vec(cv_mat.begin<float>(), cv_mat.end<float>());
+ 	std::stringstream cv_mat_ss;
+  	copy(cv_mat_vec.begin(), cv_mat_vec.end(), std::ostream_iterator<float>(cv_mat_ss, ", "));
+  	ROS_INFO("[cvMat: %s", cv_mat_ss.str().c_str());
+- List screens from tmux: screen -ls, show output of screen: screen -x
+- Attention opencv tfs: need to check size of output image, if after tf outside of this it is not displayed!
+- Fix for transformation part 1 (camera-base link): shift image in ground space to be centered, else only part of image is visible
+- Fix for transformation part 2 (rolling window-base link): unite all transformations in one transformation matrix instead of applying them all individually
+- Occupancy grid turns red if only a certain color is present, if additional colors are present it changes the color ordering
+- Attention converting double to float can lead to overflow, need to cast explicitely
+- ROS bag can be in wrong format when playing it, use rosbag check to find migration fixes and rosbag fix to fix it
+- Attention running ros bags with different lengths at the same time: smaller bags are not running yet!
+- Bags naming (e.g. ending with numbers) does not matter when playing, only time stamps
+- Attention with topic name definition: try with / and without / if topic seems to be wrong
+- Python profiling: import cProfile, add overhead cProfile.run('foo()'), is in pythons standard library
+- Tf repeated data when replaying bag: multiple bags are publishing same topic, remap some topic to another, add as additional argument /tf:=/tf_unused
+- Add additional tf to tf tree: setTransform(), call only once, use lookupTransform() for debugging not rqt_tf_tree, this is only showing the most recent tfs
+- For new data with xmas branch use script of semantic map to replay bags
+- OpenCV: some methods change image within the method for some the changed image is a new output!
+- ROS playing bag wrong md5sum, msgs have changed, need to migrate bag via migration rule
+- For some bagfiles tf is dublicated, when remap tf topic to not get tf repeated warning, e.g. add /tf:=/tf_unused as new parameter
+- Ros bag with .active description was closed before it could terminate properly
+- Ros bag record always set sim time to true, otherwise recording time stamps of current computer time
+- Ros bag record does not matter if bag is played at lower rate, is capturing time stamps of messages played
+- Open pycharm via terminal to load imported librariesroslaunch perception_underfoot_labeling underfoot_projector.launch node_number:=1
+- Numpy python output of array is sometimes nested array, e.g. [[x, y, z]]
+- Source devel.bash after changing launch file
+- Git push error: Error in git rev-list --stdin --objects --not --remotes=origin --, need to fetch from remote branch first
+- Image rectification: go to develop branch in core_logging
+
+# Euler ETH Cluster
+- Login:
+	ssh -Y <username>@euler.ethz.ch
+- Create job:
+	bsub python test.py
+- Check status of jobs:
+	bjobs or bbjobs
+- Exit cluster:
+	logout
+- Launch an interactive shell:
+	- with GPU: bsub -n 16 -W 1:00 -R "rusage[mem=5000,ngpus_excl_p=2]" -R "select[gpu_mtotal0>=10000]" -R "rusage[scratch=10000]" -Is bash
+	- with CPU: bsub -n 16 -W 1:00 -Is bash
+- Load new modules:
+	env2lmod
+	
+- Example to run machine learning modules:
+	env2lmod && module load gcc/6.3.0 python_gpu/3.8.5 eth_proxy
+	
+	bsub -Is -n 36 -R "rusage[mem=1224]" -R "rusage[ngpus_excl_p=1]" -R "select[gpu_mtotal0>=8000]" bash
+	bsub -Is -n 36 -R "rusage[mem=1224]" -R "rusage[ngpus_excl_p=1]" -R "select[gpu_mtotal0>=14000]" bash
+
+- Euler has two kind of GPU: rtx2080Ti and TitanRTX, rtx only has 11 GB memory, add additional flag to job to request for more than 11 GB than it switches to TitanRTX
+	TitanRTX: <gpuhe.4h> queue, RTX2080Ti: <gpu.4h> queue
+	
+- Copy from remote directory onto current local directory (run from local machine):
+	scp schmirob@euler.ethz.ch:/cluster/home/schmirob/<path_to_file> .
+	
+	scp -r schmirob@euler.ethz.ch:/cluster/home/schmirob/perception-cross-modal-labeling/perception_underfoot_detection/network_4/saved_images .
+
+- Show all jobs in a queue:
+	bjobs -u all -p -q gpu.4h
+	personal jobs: bjobs -p
+
+
+# Weights and Biases
+- Turn offline: wandb offline, turn online: wandb online
+- Sync offline run: go to wandb/latest_run and run wandb sync <latest_run>
+- Connect to server via bash: module load eth_proxy
